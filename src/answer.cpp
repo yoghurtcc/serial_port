@@ -8,7 +8,7 @@
 #include <sstream>
 #include "serialpost.hpp"
 
-int ros_post_pc(const uint8_t  buffer,ros::Publisher chatter_pub){
+int ros_post_pc(const int8_t  buffer,ros::Publisher chatter_pub){
         std_msgs::UInt8MultiArray  msg;
         msg.data.resize(64);
         msg.data[0]=0xac;
@@ -41,10 +41,14 @@ int main(int argc, char **argv)
 
   while (ros::ok())
   {
-  ros_post_pc (30,chatter_pub);
-    //sleep for a while
-    loop_rate.sleep();
-    ++count;
+    uint8_t angle=0;
+    printf("please enter the angle(0-100):\n");
+    scanf("%d",&angle);
+  ros_post_pc (angle,chatter_pub);
+  //sleep for a while
+ //  loop_rate.sleep();
+  //ros_post_pc(60,chatter_pub);
+  loop_rate.sleep();
   }
 
   return 0;
