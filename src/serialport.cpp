@@ -1,9 +1,14 @@
  #include "serialport.hpp"
 
+uint8_t send_buffer [64];
+
 //the callback of node
-void chatterCallback(const std_msgs::String::ConstPtr& msg)
+void chatterCallback(const std_msgs::UInt8MultiArray::ConstPtr& msg)
 {
-  ROS_INFO("I heard: [%s]", msg->data.c_str());
+   for (size_t i = 0; i < 64; i++)
+        {
+            send_buffer[i]=msg->data[i];
+        }
 }
 
 //main body
@@ -58,6 +63,7 @@ int main(int argc, char** argv)
            int err =  buffer_read(buffer);
             ros_post_mpu(buffer,chatter_pub );
         }
+        sp.write(send_buffer, n);
         //wait for the next turn
         loop_rate.sleep();
     }

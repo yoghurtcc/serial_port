@@ -7,5 +7,7 @@
  #include<stdio.h>
  #include "serialread.hpp"
  #include "serialpost.hpp"
- 
+ #include "std_msgs/UInt8MultiArray.h"
+#include "std_msgs/MultiArrayDimension.h"
+
 #endif

@@ -8,10 +8,21 @@
 #include <sstream>
 #include "serialpost.hpp"
 
+int ros_post_pc(const uint8_t  buffer,ros::Publisher chatter_pub){
+        std_msgs::UInt8MultiArray  msg;
+        msg.data.resize(64);
+        msg.data[0]=0xac;
+        msg.data[1]=0xbb;
+        msg.data[2]=buffer;
+        msg.data[3]=0xff;
+        chatter_pub.publish(msg);   
+        ros::spinOnce();   
+}
+
 //use this fuction 
 void chatterMPUCallback(const std_msgs::UInt8MultiArray::ConstPtr& msg)
 {
-  ROS_INFO("I heard: [%x]", msg->data[0]);
+ // ROS_INFO("I heard: [%x]", msg->data[0]);//
 }
 
 int main(int argc, char **argv)
@@ -21,7 +32,7 @@ int main(int argc, char **argv)
     //init nodehandler
     ros::NodeHandle n;   
     //pulish chatter
-    ros::Publisher chatter_pub = n.advertise<std_msgs::String>("chatter_pc", 1000);
+    ros::Publisher chatter_pub = n.advertise<std_msgs::UInt8MultiArray>("chatter_pc", 1000);
     ros::Subscriber sub = n.subscribe("chatter_mpu", 1000, chatterMPUCallback);
     //loop rate
     ros::Rate loop_rate(10); 
@@ -30,18 +41,7 @@ int main(int argc, char **argv)
 
   while (ros::ok())
   {
-    //use for message transporting
-    std_msgs::String msg;  
-    std::stringstream ss;
-    //report
-    ss << "hello world " << count;
-    msg.data = ss.str();
-    //log
-    ROS_INFO("%s", msg.data.c_str());
-    //publish core
-    chatter_pub.publish(msg); 
-    //spin for once
-    ros::spinOnce();  
+  ros_post_pc (30,chatter_pub);
     //sleep for a while
     loop_rate.sleep();
     ++count;
